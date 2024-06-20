@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countries Grid</title>
+<style>
+    
+    .countries-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .country-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .country-image {
+        width: 100%;
+        height: 150px; 
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .country-details {
+        padding: 10px;
+        text-align: left;
+    }
+
+    .country-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .country-region {
+        font-style: bold;
+     
+        margin-bottom: 10px;
+    }
+
+    
+</style>
+</head>
+<body>
+    <div class="countries-grid" id="countries-grid">
+       
+    </div>
+
+    <script>
+       async function fetchCountries() {
+    const url = "https://restcountries.com/v2/all"; 
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching countries:', error);
+        return [];
+    }
+}
+
+function createCountryCard(country) {
+    
+    const card = document.createElement('div');
+    card.classList.add('country-card');
+    const details = document.createElement('div');
+    details.classList.add('country-details');
+      
+    
+      const name= document.createElement('div');
+      name.classList.add('country-name');
+      name.textContent = `${country.name}`;
+      details.appendChild(name);
+
+    
+
+    const img = document.createElement('img');
+    img.classList.add('country-image');
+    img.src = country.flags.png;
+    img.alt = `${country.name.common} Flag`;
+    card.appendChild(img);    
+    
+    const capital= document.createElement('div');
+    capital.classList.add('country-capital');
+    capital.textContent = `Capital: ${country.capital}`;
+    details.appendChild(capital);
+
+    const region = document.createElement('div');
+    region.classList.add('country-region');
+    region.textContent = `Region: ${country.region}`;
+    details.appendChild(region);
+
+    card.appendChild(details);
+
+    return card;
+}
+
+async function populateGrid() {
+    const countriesGrid = document.getElementById('countries-grid');
+    const countries = await fetchCountries();
+    countriesGrid.innerHTML = '';
+    countries.forEach(country => {
+        const card = createCountryCard(country);
+        countriesGrid.appendChild(card);
+    });
+}
+document.addEventListener('DOMContentLoaded', populateGrid);
+   </script>
+</body>
+</html>
